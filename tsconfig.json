@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+      "target": "ES2020",
+      "module": "commonjs",
+      "lib": ["ES2020"],
+      "outDir": "dist",
+      "sourceMap": false,
+      "allowSyntheticDefaultImports": true,
+      "downlevelIteration": true,
+      "baseUrl": ".",
+      "paths": {
+        "*": ["node_modules/"],
+        "typings/*": ["./src/typings/*"],
+        "src/*": ["./src/*"]
+      }
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["src/test/**/*.spec.ts"]
+  }
