@@ -10,39 +10,36 @@ const addSpotPrices = async (assets: Portfolio['assets'], date: DateTime): Promi
   }
 };
 
-const copyPortfolio = ({ assets, cashIn }: Portfolio): Portfolio => ({
+const copyPortfolio = ({ assets, cashIn, totalCashIn }: Portfolio): Portfolio => ({
   assets: Object.keys(assets).reduce((acc, curr) => {
     acc[curr] = { ...assets[curr], spotPrice: NaN };
     return acc;
   }, {}),
   cashIn,
+  totalCashIn,
 });
 
 export const processTransaction = async (
   currentPortfolio: Portfolio,
   transaction: Transaction
 ): Promise<Portfolio> => {
-  let { assets, cashIn } = copyPortfolio(currentPortfolio);
+  let { assets, cashIn, totalCashIn } = copyPortfolio(currentPortfolio);
   const newAsset = assets[transaction.asset] ?? {
     quantity: 0,
     spotPrice: 0,
   };
   if (transaction.type === TRANSACTION_TYPE.RECEIVE || transaction.type === TRANSACTION_TYPE.BUY) {
     newAsset.quantity += transaction.quantity;
+    totalCashIn += !isNaN(transaction.totalEurWithFees)
+      ? transaction.totalEurWithFees
+      : transaction.quantity * transaction.spotPrice;
     cashIn += !isNaN(transaction.totalEurWithFees)
-      ? transaction.totalEur
+      ? transaction.totalEurWithFees
       : transaction.quantity * transaction.spotPrice;
   }
   if (transaction.type === TRANSACTION_TYPE.SELL) {
-    const cashOut = transaction.totalEurWithFees;
-    // TODO: consume Coinbase API to compute portfolio value then
-    // - benefice / loss on transaction
-    // - updated cash-in
     await addSpotPrices(assets, transaction.timestamp);
-    const capitalGain = computeCapitalGain({ assets, cashIn }, transaction);
-    console.log(
-      `[${transaction.timestamp.toFormat('yyyy')}]Plus-value[${transaction.asset}]: ${capitalGain}`
-    );
+    const capitalGain = computeCapitalGain({ assets, cashIn, totalCashIn }, transaction);
     newAsset.spotPrice = transaction.spotPrice;
     newAsset.quantity -= transaction.quantity;
     cashIn -= transaction.totalEurWithFees - capitalGain;
@@ -51,5 +48,6 @@ export const processTransaction = async (
   return {
     assets,
     cashIn,
+    totalCashIn,
   };
 };

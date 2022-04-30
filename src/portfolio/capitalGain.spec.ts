@@ -16,7 +16,11 @@ function createTransaction(data: { asset: string; totalEurWithFees: number }): T
 
 describe('Capital gain computation', () => {
   it('should return the difference between cash-in and cash-out for the complete sell of a mono-asset portfolio', () => {
-    const portfolio = { cashIn: 5000, assets: { BTC: { quantity: 1, spotPrice: 10000 } } };
+    const portfolio = {
+      cashIn: 5000,
+      totalCashIn: 5000,
+      assets: { BTC: { quantity: 1, spotPrice: 10000 } },
+    };
     const transaction = createTransaction({ asset: 'BTC', totalEurWithFees: 10000 });
     expect(computeCapitalGain(portfolio, transaction)).toEqual(5000);
   });
@@ -25,6 +29,7 @@ describe('Capital gain computation', () => {
     // example taken from https://finary.eu/blog/fiscalite-crypto-monnaie-le-guide/
     const portfolio = {
       cashIn: 10000,
+      totalCashIn: 10000,
       assets: { BTC: { quantity: 1, spotPrice: 10000 }, ETH: { quantity: 50, spotPrice: 250 } },
     };
     const btcTransaction = createTransaction({ asset: 'BTC', totalEurWithFees: 5000 });

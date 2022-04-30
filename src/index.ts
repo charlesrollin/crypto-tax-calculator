@@ -8,7 +8,7 @@ const run = async () => {
   await transactions.reduce(async (acc, curr) => {
     portfolios[curr.timestamp.toISO()] = await acc;
     return processTransaction(await acc, curr);
-  }, Promise.resolve({ assets: {}, cashIn: 0 }));
+  }, Promise.resolve({ assets: {}, cashIn: 0, totalCashIn: 0 }));
 };
 
 run();

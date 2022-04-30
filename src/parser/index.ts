@@ -8,7 +8,7 @@ export function parseCsv(): Transaction[] {
   const csvContent = fse.readFileSync(path.resolve(__dirname, '../../data/coinbase.csv'));
   const records: any[] = parse(csvContent, { fromLine: 9 });
   return records
-    .map(([timestamp, type, asset, quantity, spotPrice, totalEur, totalEurWithFees, fees]) => ({
+    .map(([timestamp, type, asset, quantity, _, spotPrice, totalEur, totalEurWithFees, fees]) => ({
       timestamp: DateTime.fromISO(timestamp),
       type,
       asset,

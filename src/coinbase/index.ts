@@ -29,12 +29,14 @@ const updateCache = (asset: string, date: DateTime, price: number) => {
 
 export async function getSpotPriceHistory(asset: string, date: DateTime) {
   const cachedPrice = priceCache[asset]?.[date.toISO()];
+  // console.log(asset, cachedPrice);
   if (cachedPrice) {
     return cachedPrice;
   }
   const result = await axios.get<SpotPriceResult>(
     `https://api.coinbase.com/v2/prices/${asset}-EUR/spot?date=${date.toISO()}`
   );
+  // console.log(asset, result);
   const price = parseFloat(result.data.data.amount);
   updateCache(asset, date, price);
   return price;
