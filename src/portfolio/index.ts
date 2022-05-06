@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
-import { getSpotPriceHistory } from '../coinbase';
+import { coinbaseExchange } from '../exchanges';
 import { computeCapitalGain } from './capitalGain';
 import { Portfolio } from './portfolio';
 import { Transaction, TRANSACTION_TYPE } from './transaction';
 
 const addSpotPrices = async (assets: Portfolio['assets'], date: DateTime): Promise<void> => {
   for (const asset of Object.keys(assets)) {
-    assets[asset].spotPrice = await getSpotPriceHistory(asset, date);
+    assets[asset].spotPrice = await coinbaseExchange.getSpotPrice({ asset, date });
   }
 };
 

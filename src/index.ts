@@ -1,9 +1,9 @@
-import { parseCsv } from './parser';
+import { coinbaseExchange } from './exchanges';
 import { processTransaction } from './portfolio';
 import { Portfolio } from './portfolio/portfolio';
 
 const run = async () => {
-  const transactions = parseCsv();
+  const transactions = coinbaseExchange.parse();
   const portfolios: Record<string, Portfolio> = {};
   await transactions.reduce(async (acc, curr) => {
     portfolios[curr.timestamp.toISO()] = await acc;
